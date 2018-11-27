@@ -2,6 +2,8 @@ package com.comm201.a201maptest;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -12,6 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.ZoomControls;
 
@@ -31,12 +35,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     ZoomControls zoom;
-    Button markBt;
+    ImageButton markBt;
+    ImageButton geoLocationBt;
+    ImageButton satView;
     Double myLatitude = null;
     Double myLongitude = null;
     private GoogleApiClient googleApiClient;
@@ -100,7 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        markBt = (Button) findViewById(R.id.btMark);
+        markBt = (ImageButton) findViewById(R.id.btMark);
         markBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,7 +118,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        geoLocationBt = (ImageButton) findViewById(R.id.btSearch);
+        geoLocationBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText searchText = (EditText) findViewById(R.id.etLocationEntry);
+                String search = searchText.getText().toString();
+                if (search != null && !search.equals("")) {
+                    List<android.location.Address> addressList = null;
+                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                    try {
+                        addressList = geocoder.getFromLocationName(search, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("from geocoder"));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                }
+            }
+        });
 
+        satView = (ImageButton) findViewById(R.id.btSatellite);
+        satView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                    //satView.setText("NORM");
+                } else {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    //satView.setText("SAT");
+                }
+            }
+        });
     }
 
 
