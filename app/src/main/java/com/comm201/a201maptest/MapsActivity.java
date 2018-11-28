@@ -119,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
                 markBt.startAnimation(buttonClick);
                 LatLng metro = new LatLng(myLatitude, myLongitude);
-                mMap.addMarker(new MarkerOptions().position(metro).title("Saved Location"));
+                mMap.addMarker(new MarkerOptions().position(metro).title("Saved Location").draggable(true));
             }
         });
 
@@ -142,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Address address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title("from geocoder"));
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("from geocoder").draggable(true));
                     mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                 }
             }
