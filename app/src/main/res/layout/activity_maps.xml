@@ -40,33 +40,44 @@ android:layout_height="match_parent">
 
     <ImageButton
         android:id="@+id/btMark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/round_button"
         android:src="@drawable/insert_map_marker" />
 
     <ImageButton
         android:id="@+id/btClear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/btSatellite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="3dp"
+        android:layout_above="@+id/btSatellite"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/round_button"
         android:src="@drawable/clear_map_marker" />
 
     <ImageButton
         android:id="@+id/btSatellite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/btMark"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="3dp"
+        android:layout_above="@id/btMark"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/round_button"
         android:src="@drawable/ic_action_name" />
 
     <ZoomControls
         android:id="@+id/zcZoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btMark"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
         android:layout_alignParentRight="true"/>
 
 

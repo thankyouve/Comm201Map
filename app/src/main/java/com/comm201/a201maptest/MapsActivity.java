@@ -1,6 +1,7 @@
 package com.comm201.a201maptest;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -53,7 +55,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback  mlocationCallback;
     protected static final String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
+    private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.4F);
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                markBt.startAnimation(buttonClick);
                 LatLng metro = new LatLng(myLatitude, myLongitude);
                 mMap.addMarker(new MarkerOptions().position(metro).title("Saved Location"));
             }
@@ -122,16 +127,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geoLocationBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                geoLocationBt.startAnimation(buttonClick);
                 EditText searchText = (EditText) findViewById(R.id.etLocationEntry);
                 String search = searchText.getText().toString();
                 if (search != null && !search.equals("")) {
-                    List<android.location.Address> addressList = null;
+                    List<Address> addressList = null;
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
+
                     try {
                         addressList = geocoder.getFromLocationName(search, 1);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     Address address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(latLng).title("from geocoder"));
@@ -144,12 +152,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         satView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                satView.startAnimation(buttonClick);
                 if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
                     mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                    //satView.setText("NORM");
+                    satView.setImageResource(R.drawable.normal_map);
                 } else {
                     mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                    //satView.setText("SAT");
+                    satView.setImageResource(R.drawable.ic_action_name);
                 }
             }
         });
@@ -169,18 +178,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
+        // Add a marker in Metro and move the camera
         LatLng metro = new LatLng(44.232424, -76.491788);
         mMap.addMarker(new MarkerOptions().position(metro).title("Beloved Metro"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(metro));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             mMap.setMyLocationEnabled(true);
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -256,7 +258,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void startLocationUpdates() {
-        fusedLocationProviderClient.requestLocationUpdates(mlocationRequest, mlocationCallback, null);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationProviderClient.requestLocationUpdates(mlocationRequest, mlocationCallback, null);
+        }
     }
 
     @Override
