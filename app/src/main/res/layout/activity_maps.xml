@@ -15,7 +15,8 @@ android:layout_height="match_parent">
             android:id="@+id/etLocationEntry"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4" />
+            android:layout_weight="4"
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/btSearch"
@@ -24,7 +25,9 @@ android:layout_height="match_parent">
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/common_google_signin_btn_text_dark_default"
-            android:src="@drawable/search_magnifying_glass" />
+            android:src="@drawable/search_magnifying_glass"
+            android:visibility="gone" />
+
 
 
     </LinearLayout>
@@ -39,13 +42,24 @@ android:layout_height="match_parent">
         tools:context="com.comm201.a201maptest.MapsActivity" />
 
     <ImageButton
+        android:id="@+id/btShowSearch"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/round_button"
+        android:src="@drawable/search_magnifying_glass" />
+
+    <ImageButton
         android:id="@+id/btMark"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="70dp"
         android:background="@drawable/round_button"
         android:src="@drawable/insert_map_marker" />
 
@@ -54,7 +68,7 @@ android:layout_height="match_parent">
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="3dp"
+        android:layout_marginRight="5dp"
         android:layout_above="@+id/btSatellite"
         android:layout_marginBottom="20dp"
         android:background="@drawable/round_button"
@@ -65,7 +79,7 @@ android:layout_height="match_parent">
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="3dp"
+        android:layout_marginRight="5dp"
         android:layout_above="@id/btMark"
         android:layout_marginBottom="20dp"
         android:background="@drawable/round_button"

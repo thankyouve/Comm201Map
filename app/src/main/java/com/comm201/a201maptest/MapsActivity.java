@@ -48,6 +48,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ImageButton markBt;
     ImageButton geoLocationBt;
     ImageButton satView;
+    ImageButton showSearchBt;
+    ImageButton clear;
     Double myLatitude = null;
     Double myLongitude = null;
     private GoogleApiClient googleApiClient;
@@ -56,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected static final String TAG = "MapsActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
     private AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.4F);
+    EditText searchText;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -66,6 +69,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
 
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -123,30 +128,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        showSearchBt = (ImageButton) findViewById(R.id.btShowSearch);
         geoLocationBt = (ImageButton) findViewById(R.id.btSearch);
-        geoLocationBt.setOnClickListener(new View.OnClickListener() {
+        searchText = (EditText) findViewById(R.id.etLocationEntry);
+
+        showSearchBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                geoLocationBt.startAnimation(buttonClick);
-                EditText searchText = (EditText) findViewById(R.id.etLocationEntry);
-                String search = searchText.getText().toString();
-                if (search != null && !search.equals("")) {
-                    List<Address> addressList = null;
-                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+                showSearchBt.startAnimation(buttonClick);
+                showSearchBt.setVisibility(View.GONE);
+                geoLocationBt.setVisibility(View.VISIBLE);
+                searchText.setVisibility(View.VISIBLE);
 
-                    try {
-                        addressList = geocoder.getFromLocationName(search, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                geoLocationBt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        geoLocationBt.startAnimation(buttonClick);
+                        //EditText searchText = (EditText) findViewById(R.id.etLocationEntry);
+                        String search = searchText.getText().toString();
+                        if (search != null && !search.equals("")) {
+                            List<Address> addressList = null;
+                            Geocoder geocoder = new Geocoder(MapsActivity.this);
+
+                            try {
+                                addressList = geocoder.getFromLocationName(search, 1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Address address;
+                            if (addressList != null && !addressList.isEmpty()) {
+                                address = addressList.get(0);
+                                LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                                mMap.addMarker(new MarkerOptions().position(latLng).title(search).draggable(true));
+                                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                            } else {
+                                Toast.makeText(MapsActivity.this, "None found!", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                        showSearchBt.setVisibility(View.VISIBLE);
+                        geoLocationBt.setVisibility(View.GONE);
+                        searchText.setVisibility(View.GONE);
                     }
-
-                    Address address = addressList.get(0);
-                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title("from geocoder").draggable(true));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                }
+                });
             }
         });
+
 
         satView = (ImageButton) findViewById(R.id.btSatellite);
         satView.setOnClickListener(new View.OnClickListener() {
@@ -162,6 +190,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+
+        clear = (ImageButton) findViewById(R.id.btClear);
+        clear.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.clear();
+            }
+        }));
     }
 
 
@@ -182,6 +218,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng metro = new LatLng(44.232424, -76.491788);
         mMap.addMarker(new MarkerOptions().position(metro).title("Beloved Metro"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(metro));
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker location").draggable(true).snippet(latLng.toString()));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            }
+        });
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
         } else {
